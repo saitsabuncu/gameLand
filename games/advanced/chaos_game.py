@@ -95,7 +95,7 @@ class _ChaosCanvas(QWidget):
 
 
 @register_game(
-    display_name="Fraktal ve Kaos Oyunları",
+    display_name="Kaos Oyunu",
     difficulty=Difficulty.ADVANCED,
     instructions=(
         "Bu oyunda bir şey çizmene gerek yok -- kendi kendine çizilir, sen "

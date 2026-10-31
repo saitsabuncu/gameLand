@@ -5,9 +5,9 @@ from PyQt6.QtWidgets import QWidget
 
 
 class Difficulty(Enum):
-    BEGINNER = "Beginner"
-    INTERMEDIATE = "Intermediate"
-    ADVANCED = "Advanced"
+    BEGINNER = "Başlangıç"
+    INTERMEDIATE = "Orta"
+    ADVANCED = "İleri"
 
 
 class _QWidgetABCMeta(type(QWidget), ABCMeta):

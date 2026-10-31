@@ -1,3 +1,5 @@
+from typing import Final
+
 from PyQt6.QtWidgets import (
     QGridLayout,
     QLabel,
@@ -16,6 +18,38 @@ from core.game_registry import GameEntry, GameRegistry
 from ui.game_container import GameContainer
 
 GAMES_PER_ROW: int = 3
+CARD_MIN_HEIGHT_PX: Final[int] = 110
+CARD_SPACING_PX: Final[int] = 16
+PAGE_MARGIN_PX: Final[int] = 24
+
+_LOCKED_ACCENT_COLOR: Final[str] = "#9e9e9e"
+_LOCKED_TEXT_COLOR: Final[str] = "#8a8a8a"
+
+# One accent color per difficulty, used as each card's left border -- a
+# quick visual cue for which tier a game belongs to even before reading
+# its name (green=easier, red=harder is a common, low-effort convention).
+_DIFFICULTY_ACCENT_COLORS: Final[dict[Difficulty, str]] = {
+    Difficulty.BEGINNER: "#43a047",
+    Difficulty.INTERMEDIATE: "#fb8c00",
+    Difficulty.ADVANCED: "#8e24aa",
+}
+
+# Keyed by display_name rather than a field on GameEntry/BaseGame -- purely
+# a menu-presentation concern, so it stays local to this file instead of
+# growing the registry/decorator contract every other game module uses.
+_GAME_ICONS: Final[dict[str, str]] = {
+    "Number Guessing": "🎯",
+    "Math Quiz Challenge": "➗",
+    "Asal Sayı Avcısı": "🔍",
+    "Hangman": "🔤",
+    "Nim Game": "🪨",
+    "Monty Hall Problemi Simülasyonu": "🚪",
+    "Math Countdown": "⏱️",
+    "2048": "🧮",
+    "Sudoku": "🔢",
+    "Kaos Oyunu": "🌀",
+}
+_DEFAULT_GAME_ICON: Final[str] = "🎮"
 
 
 class MainWindow(QMainWindow):
@@ -44,27 +78,58 @@ class MainWindow(QMainWindow):
         entries = GameRegistry.get_by_difficulty(difficulty)
 
         page = QWidget()
-        layout = QGridLayout(page)
+        page_layout = QVBoxLayout(page)
+        page_layout.setContentsMargins(
+            PAGE_MARGIN_PX, PAGE_MARGIN_PX, PAGE_MARGIN_PX, PAGE_MARGIN_PX
+        )
 
         if not entries:
-            layout.addWidget(QLabel("No games registered yet."), 0, 0)
+            page_layout.addWidget(QLabel("Henüz oyun eklenmedi."))
+            page_layout.addStretch(1)
             return page
 
+        card_grid = QGridLayout()
+        card_grid.setSpacing(CARD_SPACING_PX)
         for index, entry in enumerate(entries):
             row, column = divmod(index, GAMES_PER_ROW)
-            layout.addWidget(self._build_game_button(entry), row, column)
+            card_grid.addWidget(self._build_game_button(entry), row, column)
 
+        page_layout.addLayout(card_grid)
+        # Absorbs all leftover vertical space below the cards instead of
+        # QGridLayout silently distributing it as extra gaps *between*
+        # rows -- the same fix as the Sudoku board, applied to a plain
+        # QGridLayout dropped straight into a full-window page.
+        page_layout.addStretch(1)
         return page
 
     def _build_game_button(self, entry: GameEntry) -> QPushButton:
-        label = f"🔒 {entry.display_name}" if entry.is_locked else entry.display_name
-        button = QPushButton(label)
-        button.setMinimumHeight(80)
+        icon = _GAME_ICONS.get(entry.display_name, _DEFAULT_GAME_ICON)
+        button_text = f"{icon}\n{entry.display_name}"
         if entry.is_locked:
-            button.setStyleSheet("color: gray;")
+            button_text += "\n🔒 Kilitli"
+
+        button = QPushButton(button_text)
+        button.setMinimumHeight(CARD_MIN_HEIGHT_PX)
+        button.setStyleSheet(self._card_stylesheet(entry))
+        if entry.is_locked:
             button.setToolTip(entry.unlock_description)
         button.clicked.connect(lambda: self._launch_game(entry))
         return button
+
+    def _card_stylesheet(self, entry: GameEntry) -> str:
+        if entry.is_locked:
+            accent_color, text_color = _LOCKED_ACCENT_COLOR, _LOCKED_TEXT_COLOR
+        else:
+            accent_color, text_color = _DIFFICULTY_ACCENT_COLORS[entry.difficulty], "#1a1a1a"
+
+        return (
+            "QPushButton {"
+            "background-color: #ffffff; border: 1px solid #e0e0e0; "
+            f"border-left: 5px solid {accent_color}; border-radius: 8px; "
+            f"padding: 10px; font-size: 15px; font-weight: 600; color: {text_color};"
+            "}"
+            "QPushButton:hover { background-color: #f7f7f7; }"
+        )
 
     def _launch_game(self, entry: GameEntry) -> None:
         if entry.is_locked:
