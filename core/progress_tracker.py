@@ -5,7 +5,7 @@ from typing import Final
 import settings
 from core.achievements import Achievement
 
-PROGRESS_FILE: Final[Path] = settings.BASE_DIR / "data" / "progress.json"
+PROGRESS_FILE: Final[Path] = settings.USER_DATA_DIR / "progress.json"
 
 
 class ProgressTracker:

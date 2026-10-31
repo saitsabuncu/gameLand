@@ -3,4 +3,7 @@ __pycache__/
 *.pyc
 .vscode/
 .idea/
-data/
+.pytest_cache/
+build/
+dist/
+*.egg-info/

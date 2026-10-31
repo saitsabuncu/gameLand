@@ -1,0 +1,41 @@
+name: Release
+
+# Builds a standalone Windows .exe and attaches it to a GitHub Release
+# whenever a version tag is pushed, e.g.:
+#   git tag v0.2.0 && git push origin v0.2.0
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build-windows-exe:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
+
+      - name: Run tests before building a release
+        run: pytest -v
+        env:
+          QT_QPA_PLATFORM: offscreen
+
+      - name: Build with PyInstaller
+        run: pyinstaller gameland.spec
+
+      - name: Zip the build output
+        run: Compress-Archive -Path dist\gameLand.exe -DestinationPath dist\gameLand-windows.zip
+
+      - name: Create GitHub Release and upload the build
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/gameLand-windows.zip
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

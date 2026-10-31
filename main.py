@@ -2,14 +2,11 @@ import sys
 
 from PyQt6.QtWidgets import QApplication
 
-import games
+import games  # noqa: F401  -- import alone registers every game, see games/__init__.py
 from ui.main_window import MainWindow
-from utils.game_loader import discover_games
 
 
 def main() -> None:
-    discover_games(games)
-
     app = QApplication(sys.argv)
     window = MainWindow()
     window.show()

@@ -65,7 +65,8 @@ gameLand/
 |   |-- achievements.py          # Achievement enum (kilit sistemi icin)
 |   `-- progress_tracker.py      # ProgressTracker: kazanilan achievementleri diske kaydeder
 |-- games/
-|   |-- beginner/
+|   |-- __init__.py              # from games import beginner, intermediate, advanced
+|   |-- beginner/                # __init__.py o seviyedeki her oyun modulunu import eder
 |   |-- intermediate/
 |   `-- advanced/
 |-- ui/
@@ -73,8 +74,8 @@ gameLand/
 |   |-- game_container.py        # Aktif oyunu host eden frame + global kisayollar
 |   |-- game_shortcuts.py        # Kisayol tuslarinin tek kaynagi (RESTART_KEY, PAUSE_KEY)
 |   `-- shortcut_aware_line_edit.py
-`-- utils/
-    `-- game_loader.py           # games/ paketini recursive import eden discover_games()
+|-- utils/                       # Her oyunun saf mantigi (PyQt bagimsiz, pytest ile test edilir)
+`-- tests/                       # pytest suite -- bkz. Test & Paketleme
 ```
 
 **Yeni oyun eklemek icin:**
@@ -82,12 +83,43 @@ gameLand/
 1. `games/<zorluk>/<oyun_adi>.py` dosyasini olustur.
 2. `BaseGame`'den tureyen bir sinif yaz, `start()` ve `reset()` metotlarini implement et.
 3. Sinifi `@register_game(display_name="...", difficulty=Difficulty.<SEVIYE>)` ile isaretle.
+4. Yeni modulu `games/<zorluk>/__init__.py`'deki import listesine ekle.
 
-Baska hicbir dosyayi (menu, registry) elle degistirmen gerekmez -- `main.py` acilirken `games/` paketini otomatik tarar, decorator kendini registry'e kaydeder.
+4. adim **zorunlu** -- ve kasitli olarak otomatik degil. Onceki surumde `games/` paketi `pkgutil.walk_packages` ile dosya sisteminde taraniyordu ("4. adim gerekmez" deniyordu), ama bu PyInstaller ile paketlenince tamamen bozuluyordu: donmus (frozen) bir derlemede saf Python modulleri diskte gevsek dosyalar olarak degil, sikistirilmis bir arsivin icinde yasar, yani `games.__path__` pkgutil'in goremedigi bir dizine isaret ediyor -- paketlenmis uygulama hicbir hata vermeden **sifir oyunla** aciliyordu (build edilip calistirilarak dogrulandi). Cozum: dosya sistemi taramasi tamamen kaldirildi, yerine `games/<seviye>/__init__.py`'de duz, statik `import` ifadeleri kullanildi -- PyInstaller statik import'lari kendiliginden takip ettigi icin artik ekstra bir `hiddenimports` bildirimine de gerek yok. Bedeli: yeni oyun eklerken bir satir import eklemek: kucuk, aciyla not gorulebilir, karsiliginda paketlendiginde de calisan bir davranis.
+
+## Test & Paketleme
+
+```bash
+pip install -r requirements-dev.txt   # pytest + pyinstaller
+```
+
+**Testler** (`tests/`): her oyunun saf mantigi (`utils/*.py`) ve `GameRegistry`/`ProgressTracker` icin pytest testleri var -- PyQt widget'lari degil, sadece PyQt'den bagimsiz mantik test ediliyor (bu ayrim projenin basindan beri bilincli: UI testi kirilgandir, mantik testi degildir).
+
+```bash
+pytest                 # tum suite
+QT_QPA_PLATFORM=offscreen pytest   # Linux'ta ekransiz (CI'da kullanilan ayar)
+```
+
+`pytest.ini`'deki `pythonpath = .` sayesinde proje kokunden veya baska bir dizinden calistirmak fark etmez. `.github/workflows/tests.yml`, her `push`/`pull request`'te Ubuntu'da testleri otomatik calistirir.
+
+**Paketleme** (`gameland.spec`): tek-dosya bir Windows `.exe` uretir.
+
+```bash
+pyinstaller gameland.spec    # -> dist/gameLand.exe
+```
+
+`.github/workflows/release.yml`, `v*` formatinda bir tag push'landiginda (orn. `git tag v0.2.0 && git push origin v0.2.0`) once testleri calistirir, sonra Windows'ta `.exe`'yi derler ve GitHub Releases'e ekler.
+
+**Paketlemede bulunup duzeltilen iki mimari hata** (asil neden: PyInstaller'in donmus/frozen derlemesi, "kaynak" dizini diye bir sey yoktur -- her sey gecici bir acma dizininde veya sikistirilmis bir arsivin icindedir):
+
+1. *Oyun kesfi.* `games/` paketi eskiden `pkgutil.walk_packages` ile dosya sisteminde taraniyordu. PyInstaller'da saf Python modulleri diskte gevsek dosya olarak degil, sikistirilmis arsivin icinde durur -- `games.__path__` pkgutil'in goremedigi bir yola isaret ediyor ve **hicbir hata vermeden** sifir oyun kayitli kaliyordu (gercek bir build ile dogrulandi). Duzeltme: `games/<seviye>/__init__.py`'de duz statik `import` ifadeleri (bkz. Mimari).
+2. *Achievement kaliciligi.* `progress.json`'un konumu (`settings.BASE_DIR`) proje klasorunden hesaplaniyordu; PyInstaller'da bu, calistirma bitince silinen gecici bir dizine denk geliyor -- kilitler her acilista sessizce sifirlaniyordu. Duzeltme: `settings.USER_DATA_DIR`, isletim sistemine gore gercek bir kullanici-veri dizinine isaret ediyor (bkz. Kilit Sistemi).
+
+Her ikisi de **sessiz** basarisizliklardi -- hata vermiyor, sadece yanlis calisiyordu; bu yuzden "calisiyor gibi gorunuyor" ile "paketlenince calisiyor" arasindaki farki gorebilmek icin gercek bir `pyinstaller` build'i alip calistirarak dogrulandilar, sadece kod okuyarak degil.
 
 ## Kilit Sistemi (Achievement Unlock)
 
-Bazi oyunlar, baska oyunlarda belirli bir basari (`Achievement`) kazanilana kadar menude kilitli (🔒) gorunur ve tiklaninca kilit aciklamasini gosterir. Kilit durumu `data/progress.json` dosyasina kalici olarak kaydedilir (gitignore'da, oyuncuya ozel kayit verisi oldugu icin repoya commitlenmez), yani uygulamayi her actiginizda yeniden kazanmaniz gerekmez.
+Bazi oyunlar, baska oyunlarda belirli bir basari (`Achievement`) kazanilana kadar menude kilitli (🔒) gorunur ve tiklaninca kilit aciklamasini gosterir. Kilit durumu, isletim sistemine gore degisen bir **kullanici-veri dizinindeki** `progress.json` dosyasina kalici olarak kaydedilir (`settings.USER_DATA_DIR`: Windows'ta `%APPDATA%\gameLand`, macOS'ta `~/Library/Application Support/gameLand`, Linux'ta `~/.local/share/gameLand`), yani uygulamayi her actiginizda yeniden kazanmaniz gerekmez. Bu konum, proje klasorunun **disinda** -- bilerek: daha once `BASE_DIR / "data"` (proje klasorunun icinde) kullaniliyordu, ama PyInstaller ile paketlenince `BASE_DIR` gecici bir acma dizinine (`sys._MEIPASS`) isaret ediyor ve bu dizin uygulama her kapandiginda silinip gidiyor -- yani achievementler sessizce hic kalici olmuyordu (bkz. Test & Paketleme). `python main.py` ile dogrudan calistirmada da, paketlenmis `.exe`'de de ayni kod yolu kullanilir.
 
 **Su an tek kilitli oyun: Hangman.** Number Guessing, Math Quiz Challenge veya Asal Sayi Avcisi'ndan **herhangi birinde** en az "Iyi/Harika" seviyesinde bir sonuc alindiginda acilir (hepsini degil, sadece birini basarmak yeterli). Gerekce: ilk 3 Beginner oyunu matematiksel, Hangman kelime bazli -- kelime oyununa gecmeden once biraz matematiksel yetkinlik gostermek bekleniyor.
 
