@@ -31,6 +31,22 @@ Kisayollar `GameContainer` seviyesinde tanimlidir -- aktif oyun ne olursa olsun 
 
 Metin girisi olan oyunlarda (orn. Number Guessing) `ShortcutAwareLineEdit` kullanilir: bu bilesen, kutu odaktayken bile R/P tuslarinin kisayol sistemine ulasmasini saglar, diger tum karakterler normal sekilde yazilabilir.
 
+## Yardim Sistemi (Nasil Oynanir?)
+
+`GameContainer`'da her oyunda goruntulenen bir **"❓ Nasil Oynanir?"** butonu vardir. Tiklaninca aktif oyunun kurallarini aciklayan bir mesaj penceresi acilir. Tum mevcut oyunlarda (Number Guessing, Math Quiz Challenge, Asal Sayi Avcisi, Hangman, Nim Game) bu aciklama metni tanimlidir.
+
+**Yeni bir oyun yazarken** aciklama eklemek icin, `@register_game` decorator'una bir `instructions` parametresi gecirilir:
+
+```python
+@register_game(
+    display_name="...",
+    difficulty=Difficulty.<SEVIYE>,
+    instructions="Oyunun kurallarini aciklayan metin.",
+)
+```
+
+Bu parametre atlanirsa, yardim butonu otomatik olarak genel bir fallback mesaji gosterir ("Bu oyun icin ek aciklama eklenmedi.") -- yani yeni bir oyun icin `instructions` unutulursa uygulama hata vermez, sadece eksik bir aciklama gorunur. Baska hicbir dosyada (GameContainer, BaseGame) degisiklik gerekmez.
+
 ## Mimari
 
 ```
