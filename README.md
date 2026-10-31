@@ -66,7 +66,7 @@ Baska hicbir dosyayi (menu, registry) elle degistirmen gerekmez -- `main.py` aci
 ### Baslangic (Beginner)
 - [x] Number Guessing -- 1-100 arasi sayi tahmini, sinirsiz deneme. Sert bir deneme limiti yok; bunun yerine ikili arama optimumuna (7 deneme) gore performans etiketi gosterilir: Mukemmel / Iyi is / Daha hizli olabilirdi.
 - [x] Math Quiz Challenge -- 10 soruluk +/-/x/÷ testi, sure baskisi yok. Toplama/cikarma 1-50 araliginda, carpma/bolme 2-12 carpim tablosu araliginda (bolme her zaman tam sayi sonuclanir). Final ekraninda skora gore performans etiketi: Mukemmel / Harika is / Iyi ama daha pratik yapabilirsin / Daha cok pratik yapmalisin.
-- [ ] Asal Sayi Avcisi
+- [x] Asal Sayi Avcisi -- 1-100 arasi 10x10 grid, asal sayilari bul. Asala tiklarsan yesil, degilse kirmizi (yanlis sayaci artar), her buton tek tiklamalik. Sert basarisizlik durumu yok; tum asallar bulununca yanlis tiklama sayisina gore performans etiketi: Mukemmel / Harika is / Iyi ama daha dikkatli olabilirsin / Daha cok pratik yapmalisin.
 - [ ] Hangman
 
 Her iki Beginner oyunu da ayni felsefeyi paylasir: sert bir basari/basarisizlik siniri yerine, kullaniciyi cezalandirmadan performansini gostermek.
