@@ -25,15 +25,15 @@ Kisayollar `GameContainer` seviyesinde tanimlidir -- aktif oyun ne olursa olsun 
 | Tus | Islev | Durum |
 |-----|-------|-------|
 | `R` | Aktif oyunu yeniden baslatir (`reset()`) | Aktif |
-| `P` | Oyunu duraklatir/devam ettirir (`toggle_pause()`) | Rezerve -- varsayilan olarak no-op |
+| `P` | Oyunu duraklatir/devam ettirir (`toggle_pause()`) | Aktif (sadece **Math Countdown**'da) |
 
-`toggle_pause()`, `BaseGame`'de **opsiyonel** bir kancadir. Number Guessing gibi tur bazli oyunlarda duraklatilacak bir sey olmadigi icin P tusu su an gorunur bir etki yaratmaz; bu kasitlidir. Ileride **Math Countdown** gibi zamanlayicili bir oyun eklendiginde, o oyun sadece kendi `toggle_pause()` metodunu override eder ve P otomatik olarak anlam kazanir -- `GameContainer` veya `BaseGame` tarafinda ekstra bir degisiklik gerekmez.
+`toggle_pause()`, `BaseGame`'de **opsiyonel** bir kancadir. Tur bazli oyunlarda (Number Guessing, Nim Game, Monty Hall, vs.) duraklatilacak bir sey olmadigi icin P tusu bu oyunlarda gorunur bir etki yaratmaz; bu kasitlidir. **Math Countdown**, projenin ilk zamanlayicili oyunu olarak `toggle_pause()`'u override eder: P'ye basinca `QTimer` durur/devam eder, giris kutusu ve gonder butonu da duraklama sirasinda devre disi kalir -- `GameContainer` veya `BaseGame` tarafinda ekstra bir degisiklik gerekmedi.
 
 Metin girisi olan oyunlarda (orn. Number Guessing) `ShortcutAwareLineEdit` kullanilir: bu bilesen, kutu odaktayken bile R/P tuslarinin kisayol sistemine ulasmasini saglar, diger tum karakterler normal sekilde yazilabilir.
 
 ## Yardim Sistemi (Nasil Oynanir?)
 
-`GameContainer`'da her oyunda goruntulenen bir **"❓ Nasil Oynanir?"** butonu vardir. Tiklaninca aktif oyunun kurallarini aciklayan bir mesaj penceresi acilir. Tum mevcut oyunlarda (Number Guessing, Math Quiz Challenge, Asal Sayi Avcisi, Hangman, Nim Game, Monty Hall Problemi Simulasyonu) bu aciklama metni tanimlidir.
+`GameContainer`'da her oyunda goruntulenen bir **"❓ Nasil Oynanir?"** butonu vardir. Tiklaninca aktif oyunun kurallarini aciklayan bir mesaj penceresi acilir. Tum mevcut oyunlarda (Number Guessing, Math Quiz Challenge, Asal Sayi Avcisi, Hangman, Nim Game, Monty Hall Problemi Simulasyonu, Math Countdown) bu aciklama metni tanimlidir.
 
 **Yeni bir oyun yazarken** aciklama eklemek icin, `@register_game` decorator'una bir `instructions` parametresi gecirilir:
 
@@ -111,7 +111,7 @@ Ilk 3 Beginner oyunu ayni felsefeyi paylasir: sert bir basari/basarisizlik sinir
 ### Orta (Intermediate)
 - [x] Nim Game -- klasik Nim (normal oyun), optimal strateji oynayan bilgisayara karsi. 3-4 yigin (her biri 1-7 tas), her oyunda rastgele. Bir tasa tiklayinca o tas ve sagindaki tum taslar alinir; son tasi alan kazanir. Nim-sum teorisine dayali bilgisayar hamlesi (`utils/nim_utils.py`) -- kaybedilen bir pozisyondan (nim-sum=0) kazanilamaz, bu matematiksel olarak kanitlanmistir.
 - [x] Monty Hall Problemi Simulasyonu -- 3 kapi, klasik host kurali (Monty asla arabayi acmaz, asla oyuncunun kapisini acmaz). Manuel modda kapi sec, Monty bir keciyi acar, degistir/kal karari ver. Ayrica "Simule Et" ile N turu aninda kosturan toplu simulasyon var; manuel ve toplu turlar ayni degistir/kal istatistik paneline eklenir (kazanma oranlari gercek zamanli gorulur, ~%66.7 vs ~%33.3'e yakinsamasi beklenir). Saf olasilik mantigi `utils/monty_hall_utils.py`'de, UI'dan bagimsiz.
-- [ ] Math Countdown
+- [x] Math Countdown -- klasik Countdown sayi oyunu. Her turda 6 sayi (0-4 buyuk kart: 25/50/75/100, kalani kucuk kart: 1-10'dan iki set) ve 3 haneli hedef verilir; +-*/ ve parantezlerle 30 saniyede hedefe en yakin sonucu bulmaya calisilir. Kural: her ara sonuc pozitif tam sayi olmali, bolme kalansiz olmali -- ifade `ast` ile guvenli sekilde ayristirilip dogrulanir (`utils/countdown_utils.py`). Puanlama: tam isabet 10, +-5 ici 7, +-10 ici 5, uzaksa 0 puan; 5 tur sonunda toplam puana gore performans etiketi. **Projenin ilk gercek zamanlayicili oyunu**: `toggle_pause()` burada artik no-op degil, P tusu QTimer'i gercekten durdurup devam ettiriyor (bkz. Klavye Kisayollari).
 
 ### Ileri (Advanced)
 - [ ] 2048 Oyunu
