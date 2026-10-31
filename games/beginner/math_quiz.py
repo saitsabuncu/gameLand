@@ -5,8 +5,10 @@ from typing import Final
 
 from PyQt6.QtWidgets import QLabel, QPushButton, QVBoxLayout
 
+from core.achievements import Achievement
 from core.base_game import BaseGame, Difficulty
 from core.game_registry import register_game
+from core.progress_tracker import ProgressTracker
 from ui.shortcut_aware_line_edit import ShortcutAwareLineEdit
 
 QUESTION_COUNT: Final[int] = 10
@@ -175,6 +177,9 @@ class MathQuizGame(BaseGame):
         self._feedback_label.clear()
         self._answer_input.setEnabled(False)
         self._primary_button.setEnabled(False)
+
+        if self._score >= QUESTION_COUNT * GOOD_SCORE_RATIO:
+            ProgressTracker.unlock_achievement(Achievement.MATH_QUIZ_GOOD_OR_BETTER)
 
     def _build_performance_note(self) -> str:
         if self._score == QUESTION_COUNT:

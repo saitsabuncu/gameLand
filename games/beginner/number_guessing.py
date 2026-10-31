@@ -4,8 +4,10 @@ from typing import Final
 
 from PyQt6.QtWidgets import QLabel, QPushButton, QVBoxLayout
 
+from core.achievements import Achievement
 from core.base_game import BaseGame, Difficulty
 from core.game_registry import register_game
+from core.progress_tracker import ProgressTracker
 from ui.shortcut_aware_line_edit import ShortcutAwareLineEdit
 
 MIN_NUMBER: Final[int] = 1
@@ -95,6 +97,9 @@ class NumberGuessingGame(BaseGame):
         )
         self._guess_input.setEnabled(False)
         self._submit_button.setEnabled(False)
+
+        if self._attempt_count <= OPTIMAL_ATTEMPTS + GOOD_ATTEMPTS_MARGIN:
+            ProgressTracker.unlock_achievement(Achievement.NUMBER_GUESSING_GOOD_OR_BETTER)
 
     def _build_performance_note(self) -> str:
         if self._attempt_count <= OPTIMAL_ATTEMPTS:

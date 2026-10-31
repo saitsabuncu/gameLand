@@ -4,8 +4,15 @@ from typing import Final
 from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import QGridLayout, QLabel, QPushButton, QVBoxLayout
 
+from core.achievements import Achievement
 from core.base_game import BaseGame, Difficulty
 from core.game_registry import register_game
+
+HANGMAN_UNLOCK_DESCRIPTION: Final[str] = (
+    "Bu oyunu açmak için Number Guessing, Math Quiz Challenge veya "
+    "Asal Sayı Avcısı'ndan birinde en az İyi/Harika seviyesinde bir "
+    "sonuç almalısın."
+)
 
 MAX_WRONG_GUESSES: Final[int] = 6
 
@@ -56,7 +63,16 @@ def _word_to_display_upper(word: str) -> str:
     return "".join(_to_display_upper(letter) for letter in word)
 
 
-@register_game(display_name="Hangman", difficulty=Difficulty.BEGINNER)
+@register_game(
+    display_name="Hangman",
+    difficulty=Difficulty.BEGINNER,
+    required_achievements=frozenset({
+        Achievement.NUMBER_GUESSING_GOOD_OR_BETTER,
+        Achievement.MATH_QUIZ_GOOD_OR_BETTER,
+        Achievement.PRIME_HUNTER_GOOD_OR_BETTER,
+    }),
+    unlock_description=HANGMAN_UNLOCK_DESCRIPTION,
+)
 class HangmanGame(BaseGame):
     """Classic hangman: 6 wrong guesses allowed, on-screen Turkish keyboard."""
 

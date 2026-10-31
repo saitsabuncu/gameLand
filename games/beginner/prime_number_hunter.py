@@ -2,8 +2,10 @@ from typing import Final
 
 from PyQt6.QtWidgets import QGridLayout, QLabel, QPushButton, QVBoxLayout
 
+from core.achievements import Achievement
 from core.base_game import BaseGame, Difficulty
 from core.game_registry import register_game
+from core.progress_tracker import ProgressTracker
 from utils.math_utils import sieve_of_eratosthenes
 
 RANGE_MIN: Final[int] = 1
@@ -96,6 +98,9 @@ class PrimeNumberHunterGame(BaseGame):
         self._summary_label.setText(
             f"Tüm asal sayıları buldun! 🎉 ({self._mistake_count} yanlış tıklama) — {performance_note}"
         )
+
+        if self._mistake_count <= GOOD_MAX_MISTAKES:
+            ProgressTracker.unlock_achievement(Achievement.PRIME_HUNTER_GOOD_OR_BETTER)
 
     def _build_performance_note(self) -> str:
         if self._mistake_count <= EXCELLENT_MAX_MISTAKES:
