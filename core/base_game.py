@@ -29,3 +29,11 @@ class BaseGame(QWidget, metaclass=_QWidgetABCMeta):
     def reset(self) -> None:
         """Restarts the current game session."""
         ...
+
+    def toggle_pause(self) -> None:
+        """Pauses or resumes the game, bound to the P key by GameContainer.
+
+        Optional: most games (turn-based, no timer) have no notion of pause
+        and can safely leave this as a no-op. Timer-driven games (e.g. Math
+        Countdown) should override it.
+        """

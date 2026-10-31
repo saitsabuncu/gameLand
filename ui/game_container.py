@@ -1,5 +1,7 @@
 from typing import Callable
 
+from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QKeySequence, QShortcut
 from PyQt6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QWidget
 
 from core.base_game import BaseGame
@@ -29,6 +31,14 @@ class GameContainer(QWidget):
 
         self._body_layout = QVBoxLayout()
 
+        self._restart_shortcut = QShortcut(QKeySequence(Qt.Key.Key_R), self)
+        self._restart_shortcut.setContext(Qt.ShortcutContext.ApplicationShortcut)
+        self._restart_shortcut.activated.connect(self._handle_restart)
+
+        self._pause_shortcut = QShortcut(QKeySequence(Qt.Key.Key_P), self)
+        self._pause_shortcut.setContext(Qt.ShortcutContext.ApplicationShortcut)
+        self._pause_shortcut.activated.connect(self._handle_toggle_pause)
+
         root_layout = QVBoxLayout(self)
         root_layout.addLayout(header_layout)
         root_layout.addLayout(self._body_layout, stretch=1)
@@ -47,6 +57,10 @@ class GameContainer(QWidget):
     def _handle_restart(self) -> None:
         if self._current_game is not None:
             self._current_game.reset()
+
+    def _handle_toggle_pause(self) -> None:
+        if self._current_game is not None:
+            self._current_game.toggle_pause()
 
     def _clear_body(self) -> None:
         if self._current_game is not None:
