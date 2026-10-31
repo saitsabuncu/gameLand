@@ -33,7 +33,7 @@ Metin girisi olan oyunlarda (orn. Number Guessing) `ShortcutAwareLineEdit` kulla
 
 ## Yardim Sistemi (Nasil Oynanir?)
 
-`GameContainer`'da her oyunda goruntulenen bir **"❓ Nasil Oynanir?"** butonu vardir. Tiklaninca aktif oyunun kurallarini aciklayan bir mesaj penceresi acilir. Tum mevcut oyunlarda (Number Guessing, Math Quiz Challenge, Asal Sayi Avcisi, Hangman, Nim Game) bu aciklama metni tanimlidir.
+`GameContainer`'da her oyunda goruntulenen bir **"❓ Nasil Oynanir?"** butonu vardir. Tiklaninca aktif oyunun kurallarini aciklayan bir mesaj penceresi acilir. Tum mevcut oyunlarda (Number Guessing, Math Quiz Challenge, Asal Sayi Avcisi, Hangman, Nim Game, Monty Hall Problemi Simulasyonu) bu aciklama metni tanimlidir.
 
 **Yeni bir oyun yazarken** aciklama eklemek icin, `@register_game` decorator'una bir `instructions` parametresi gecirilir:
 
@@ -110,7 +110,7 @@ Ilk 3 Beginner oyunu ayni felsefeyi paylasir: sert bir basari/basarisizlik sinir
 
 ### Orta (Intermediate)
 - [x] Nim Game -- klasik Nim (normal oyun), optimal strateji oynayan bilgisayara karsi. 3-4 yigin (her biri 1-7 tas), her oyunda rastgele. Bir tasa tiklayinca o tas ve sagindaki tum taslar alinir; son tasi alan kazanir. Nim-sum teorisine dayali bilgisayar hamlesi (`utils/nim_utils.py`) -- kaybedilen bir pozisyondan (nim-sum=0) kazanilamaz, bu matematiksel olarak kanitlanmistir.
-- [ ] Monty Hall Problemi Simulasyonu
+- [x] Monty Hall Problemi Simulasyonu -- 3 kapi, klasik host kurali (Monty asla arabayi acmaz, asla oyuncunun kapisini acmaz). Manuel modda kapi sec, Monty bir keciyi acar, degistir/kal karari ver. Ayrica "Simule Et" ile N turu aninda kosturan toplu simulasyon var; manuel ve toplu turlar ayni degistir/kal istatistik paneline eklenir (kazanma oranlari gercek zamanli gorulur, ~%66.7 vs ~%33.3'e yakinsamasi beklenir). Saf olasilik mantigi `utils/monty_hall_utils.py`'de, UI'dan bagimsiz.
 - [ ] Math Countdown
 
 ### Ileri (Advanced)
