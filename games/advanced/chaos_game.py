@@ -98,9 +98,10 @@ class _ChaosCanvas(QWidget):
     display_name="Fraktal ve Kaos Oyunları",
     difficulty=Difficulty.ADVANCED,
     instructions=(
-        "Klasik 'Kaos Oyunu' (Chaos Game): ekrandaki nokta her adımda, "
-        "rastgele seçilen bir köşeye doğru yolun tam yarısına taşınır. "
-        "Binlerce kez tekrarlanan bu basit, rastgele kural, sonunda "
+        "Bu oyunda bir şey çizmene gerek yok -- kendi kendine çizilir, sen "
+        "sadece izlersin. Klasik 'Kaos Oyunu' (Chaos Game): ekrandaki nokta "
+        "her adımda, rastgele seçilen bir köşeye doğru yolun tam yarısına "
+        "taşınır. Binlerce kez tekrarlanan bu basit, rastgele kural, sonunda "
         "şaşırtıcı şekilde düzenli bir fraktal desen oluşturur.\n\n"
         "3 köşe (üçgen) seçiliyken kısıtlama yok -- bu tam olarak "
         "Sierpinski Üçgeni'ni üretir: üçgenin tam ortası asla "
@@ -154,6 +155,15 @@ class ChaosGameGame(BaseGame):
         self._speed_slider.valueChanged.connect(self._handle_speed_changed)
         self._points_per_tick: int = DEFAULT_POINTS_PER_TICK
 
+        # Static, never overwritten -- this is a self-playing visualization
+        # with no click/drag/type interaction, which isn't obvious from the
+        # screen alone (unlike every other game in the project, where
+        # clicking something is how you play). This label says so plainly
+        # instead of relying on the player to infer it from a number ticking
+        # up in _status_label.
+        self._watch_caption_label = QLabel("👀 Otomatik çiziliyor, bir şey yapmana gerek yok -- izle!")
+        self._watch_caption_label.setStyleSheet("font-size: 14px; font-style: italic; color: #555555;")
+
         self._status_label = QLabel()
         self._status_label.setStyleSheet("font-size: 14px;")
 
@@ -176,6 +186,7 @@ class ChaosGameGame(BaseGame):
 
         layout = QVBoxLayout(self)
         layout.addLayout(controls_layout)
+        layout.addWidget(self._watch_caption_label, alignment=Qt.AlignmentFlag.AlignHCenter)
         layout.addWidget(self._status_label, alignment=Qt.AlignmentFlag.AlignHCenter)
         layout.addSpacing(8)
         layout.addLayout(canvas_centering_layout)
