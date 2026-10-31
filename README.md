@@ -93,7 +93,7 @@ Bu iki parametre verilmezse oyun her zaman acik kalir (mevcut tum oyunlarin vars
 Ilk 3 Beginner oyunu ayni felsefeyi paylasir: sert bir basari/basarisizlik siniri yerine, kullaniciyi cezalandirmadan performansini gostermek. Hangman ise turunun geregi olarak klasik can/limit sistemini kullanir.
 
 ### Orta (Intermediate)
-- [ ] Nim Game
+- [x] Nim Game -- klasik Nim (normal oyun), optimal strateji oynayan bilgisayara karsi. 3-4 yigin (her biri 1-7 tas), her oyunda rastgele. Bir tasa tiklayinca o tas ve sagindaki tum taslar alinir; son tasi alan kazanir. Nim-sum teorisine dayali bilgisayar hamlesi (`utils/nim_utils.py`) -- kaybedilen bir pozisyondan (nim-sum=0) kazanilamaz, bu matematiksel olarak kanitlanmistir.
 - [ ] Monty Hall Problemi Simulasyonu
 - [ ] Math Countdown
 
