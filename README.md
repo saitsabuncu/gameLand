@@ -65,7 +65,7 @@ Baska hicbir dosyayi (menu, registry) elle degistirmen gerekmez -- `main.py` aci
 
 ### Baslangic (Beginner)
 - [x] Number Guessing
-- [ ] Math Quiz Challenge
+- [x] Math Quiz Challenge
 - [ ] Asal Sayi Avcisi
 - [ ] Hangman
 
