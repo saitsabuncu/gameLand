@@ -19,6 +19,11 @@ NUMBER_MAX: Final[int] = 50
 FACTOR_MIN: Final[int] = 2
 FACTOR_MAX: Final[int] = 12
 
+# Score-based performance tiers for the final summary, expressed as a
+# minimum fraction of correct answers (checked from highest to lowest).
+GREAT_SCORE_RATIO: Final[float] = 0.8
+GOOD_SCORE_RATIO: Final[float] = 0.6
+
 
 class Operator(Enum):
     ADDITION = "+"
@@ -162,11 +167,23 @@ class MathQuizGame(BaseGame):
         self._show_current_question()
 
     def _show_final_summary(self) -> None:
+        performance_note = self._build_performance_note()
         self._progress_label.setText(f"Tamamlandı: {QUESTION_COUNT}/{QUESTION_COUNT}")
-        self._question_label.setText(f"Quiz bitti! Skor: {self._score}/{QUESTION_COUNT}")
+        self._question_label.setText(
+            f"Quiz bitti! Skor: {self._score}/{QUESTION_COUNT} — {performance_note}"
+        )
         self._feedback_label.clear()
         self._answer_input.setEnabled(False)
         self._primary_button.setEnabled(False)
+
+    def _build_performance_note(self) -> str:
+        if self._score == QUESTION_COUNT:
+            return "Mükemmel! 🏆"
+        if self._score >= QUESTION_COUNT * GREAT_SCORE_RATIO:
+            return "Harika iş! 🌟"
+        if self._score >= QUESTION_COUNT * GOOD_SCORE_RATIO:
+            return "İyi, ama daha pratik yapabilirsin. 👍"
+        return "Daha çok pratik yapmalısın. 💪"
 
     def _parse_answer(self, text: str) -> int | None:
         try:
