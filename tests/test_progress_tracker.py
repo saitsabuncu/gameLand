@@ -4,6 +4,7 @@ import pytest
 
 import core.progress_tracker as progress_tracker_module
 from core.achievements import Achievement
+from core.base_game import GameLevel
 from core.progress_tracker import ProgressTracker
 
 
@@ -18,9 +19,11 @@ def isolated_progress_tracker(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     """
     monkeypatch.setattr(progress_tracker_module, "PROGRESS_FILE", tmp_path / "progress.json")
     ProgressTracker._unlocked = set()
+    ProgressTracker._levels = {}
     ProgressTracker._loaded = False
     yield
     ProgressTracker._unlocked = set()
+    ProgressTracker._levels = {}
     ProgressTracker._loaded = False
 
 
@@ -65,3 +68,38 @@ def test_corrupted_progress_file_is_treated_as_empty(
     ProgressTracker._loaded = False
 
     assert ProgressTracker.has_achievement(Achievement.NUMBER_GUESSING_GOOD_OR_BETTER) is False
+
+
+def test_get_level_returns_default_when_nothing_saved() -> None:
+    assert ProgressTracker.get_level("sudoku", default=GameLevel.MEDIUM) is GameLevel.MEDIUM
+
+
+def test_set_level_then_get_level_round_trips() -> None:
+    ProgressTracker.set_level("sudoku", GameLevel.HARD)
+    assert ProgressTracker.get_level("sudoku", default=GameLevel.MEDIUM) is GameLevel.HARD
+
+
+def test_level_is_saved_independently_per_game() -> None:
+    ProgressTracker.set_level("sudoku", GameLevel.HARD)
+    ProgressTracker.set_level("math_quiz", GameLevel.EASY)
+    assert ProgressTracker.get_level("sudoku", default=GameLevel.MEDIUM) is GameLevel.HARD
+    assert ProgressTracker.get_level("math_quiz", default=GameLevel.MEDIUM) is GameLevel.EASY
+
+
+def test_level_survives_a_fresh_load() -> None:
+    ProgressTracker.set_level("sudoku", GameLevel.EASY)
+    ProgressTracker._loaded = False
+    ProgressTracker._levels = {}
+
+    assert ProgressTracker.get_level("sudoku", default=GameLevel.MEDIUM) is GameLevel.EASY
+
+
+def test_get_level_falls_back_to_default_on_unrecognized_stored_value(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # Simulates a progress.json written by a future version with a GameLevel
+    # option that doesn't exist in this build -- must not crash.
+    ProgressTracker._loaded = True
+    ProgressTracker._levels = {"sudoku": "Cok Zor"}
+
+    assert ProgressTracker.get_level("sudoku", default=GameLevel.MEDIUM) is GameLevel.MEDIUM

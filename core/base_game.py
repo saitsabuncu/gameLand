@@ -10,6 +10,28 @@ class Difficulty(Enum):
     ADVANCED = "İleri"
 
 
+class GameLevel(Enum):
+    """An individual game's internal Easy/Medium/Hard setting.
+
+    Deliberately a separate enum from Difficulty, not three more values on
+    it: Difficulty picks which main-menu TAB a game lives under (fixed per
+    game, set once via @register_game); GameLevel is a setting the player
+    changes freely INSIDE a game that supports it (e.g. Sudoku's clue
+    count), independent of which tab it's in. Conflating the two would mean
+    changing a game's in-game level could also move it to a different menu
+    tab, which makes no sense.
+
+    Optional, like toggle_pause(): a game opts in by reading/writing it
+    itself (see games/advanced/sudoku.py) rather than BaseGame requiring it,
+    since plenty of games (Monty Hall, Chaos Game, ...) have no meaningful
+    difficulty axis at all.
+    """
+
+    EASY = "Kolay"
+    MEDIUM = "Orta"
+    HARD = "Zor"
+
+
 class _QWidgetABCMeta(type(QWidget), ABCMeta):
     """Merges PyQt6's sip metaclass with ABCMeta so BaseGame can use @abstractmethod."""
 
