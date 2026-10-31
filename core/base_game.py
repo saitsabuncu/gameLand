@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import ABCMeta, abstractmethod
 from enum import Enum
 
 from PyQt6.QtWidgets import QWidget
@@ -10,7 +10,11 @@ class Difficulty(Enum):
     ADVANCED = "Advanced"
 
 
-class BaseGame(ABC, QWidget):
+class _QWidgetABCMeta(type(QWidget), ABCMeta):
+    """Merges PyQt6's sip metaclass with ABCMeta so BaseGame can use @abstractmethod."""
+
+
+class BaseGame(QWidget, metaclass=_QWidgetABCMeta):
     """Contract that every game widget must implement."""
 
     display_name: str
