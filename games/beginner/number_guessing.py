@@ -1,3 +1,4 @@
+import math
 import random
 from typing import Final
 
@@ -8,6 +9,8 @@ from core.game_registry import register_game
 
 MIN_NUMBER: Final[int] = 1
 MAX_NUMBER: Final[int] = 100
+OPTIMAL_ATTEMPTS: Final[int] = math.ceil(math.log2(MAX_NUMBER - MIN_NUMBER + 1))
+GOOD_ATTEMPTS_MARGIN: Final[int] = 3
 
 
 @register_game(display_name="Number Guessing", difficulty=Difficulty.BEGINNER)
@@ -81,9 +84,22 @@ class NumberGuessingGame(BaseGame):
         elif guess_value > self._target_number:
             self._feedback_label.setText("Daha düşük bir sayı dene. ⬇️")
         else:
-            self._feedback_label.setText(f"Doğru bildin! 🎉 ({self._attempt_count} denemede)")
-            self._guess_input.setEnabled(False)
-            self._submit_button.setEnabled(False)
+            self._handle_correct_guess()
+
+    def _handle_correct_guess(self) -> None:
+        performance_note = self._build_performance_note()
+        self._feedback_label.setText(
+            f"Doğru bildin! 🎉 ({self._attempt_count} denemede) — {performance_note}"
+        )
+        self._guess_input.setEnabled(False)
+        self._submit_button.setEnabled(False)
+
+    def _build_performance_note(self) -> str:
+        if self._attempt_count <= OPTIMAL_ATTEMPTS:
+            return "Mükemmel! 🏆"
+        if self._attempt_count <= OPTIMAL_ATTEMPTS + GOOD_ATTEMPTS_MARGIN:
+            return "İyi iş! 👍"
+        return f"Buldun ama daha hızlı olabilirdi (optimal: {OPTIMAL_ATTEMPTS} deneme). 🐢"
 
     def _update_attempts_label(self) -> None:
         self._attempts_label.setText(f"Deneme sayısı: {self._attempt_count}")
