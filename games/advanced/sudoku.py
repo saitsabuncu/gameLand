@@ -10,6 +10,7 @@ from PyQt6.QtWidgets import (
     QLineEdit,
     QPushButton,
     QVBoxLayout,
+    QWidget,
 )
 
 from core.base_game import BaseGame, Difficulty
@@ -21,11 +22,15 @@ from utils.sudoku_utils import (
     is_grid_complete,
 )
 
-CELL_SIZE_PX: Final[int] = 42
+CELL_SIZE_PX: Final[int] = 46
+BOARD_MARGIN_PX: Final[int] = 14
 MAX_HINTS: Final[int] = 3
 
-_THIN_BORDER: Final[str] = "1px solid #999999"
-_THICK_BORDER: Final[str] = "3px solid #333333"
+_THIN_BORDER: Final[str] = "1px solid #c6c6c6"
+_THICK_BORDER: Final[str] = "2px solid #2b2b2b"
+_BOARD_CONTAINER_STYLE: Final[str] = (
+    "#sudokuBoard { background-color: #fafafa; border: 2px solid #2b2b2b; border-radius: 6px; }"
+)
 
 _CLUE_STYLE: Final[tuple[str, str]] = ("#e8e8e8", "#222222")
 _EMPTY_STYLE: Final[tuple[str, str]] = ("#ffffff", "#1a73e8")
@@ -69,11 +74,23 @@ class SudokuGame(BaseGame):
         self._is_complete: bool = False
 
         self._status_label = QLabel()
+        self._status_label.setStyleSheet("font-size: 16px; font-weight: 600;")
 
         self._cells: list[list[QLineEdit]] = []
         self._cell_coordinates: dict[QLineEdit, tuple[int, int]] = {}
-        board_layout = QGridLayout()
+
+        board_container = QWidget()
+        board_container.setObjectName("sudokuBoard")
+        board_container.setStyleSheet(_BOARD_CONTAINER_STYLE)
+        # Fixed size policy (QWidget's default) so the container -- and the
+        # QGridLayout inside it -- sizes to its content instead of
+        # stretching to fill the parent width, which would otherwise spread
+        # the fixed-size cells apart with uneven gaps between columns.
+        board_layout = QGridLayout(board_container)
         board_layout.setSpacing(0)
+        board_layout.setContentsMargins(
+            BOARD_MARGIN_PX, BOARD_MARGIN_PX, BOARD_MARGIN_PX, BOARD_MARGIN_PX
+        )
         validator = QRegularExpressionValidator(QRegularExpression(_DIGIT_1_TO_9_VALIDATOR_PATTERN))
 
         for row in range(GRID_SIZE):
@@ -92,16 +109,27 @@ class SudokuGame(BaseGame):
                 self._cell_coordinates[cell] = (row, col)
             self._cells.append(cell_row)
 
+        # Centers the (fixed-size) board horizontally regardless of the
+        # game container's width, instead of letting it hug the left edge.
+        board_centering_layout = QHBoxLayout()
+        board_centering_layout.addStretch(1)
+        board_centering_layout.addWidget(board_container)
+        board_centering_layout.addStretch(1)
+
         self._hint_button = QPushButton()
+        self._hint_button.setStyleSheet("padding: 6px 14px; font-size: 14px;")
         self._hint_button.clicked.connect(self._handle_hint_clicked)
 
         controls_layout = QHBoxLayout()
+        controls_layout.addStretch(1)
         controls_layout.addWidget(self._hint_button)
         controls_layout.addStretch(1)
 
         layout = QVBoxLayout(self)
-        layout.addWidget(self._status_label)
-        layout.addLayout(board_layout)
+        layout.addWidget(self._status_label, alignment=Qt.AlignmentFlag.AlignHCenter)
+        layout.addSpacing(8)
+        layout.addLayout(board_centering_layout)
+        layout.addSpacing(12)
         layout.addLayout(controls_layout)
         layout.addStretch(1)
 
@@ -168,7 +196,7 @@ class SudokuGame(BaseGame):
             f"background-color: {background_color}; color: {text_color}; "
             f"border-top: {top}; border-left: {left}; "
             f"border-right: {right}; border-bottom: {bottom}; "
-            "font-size: 18px; font-weight: 700;"
+            "font-size: 19px; font-weight: 700;"
         )
 
     def _lock_all_cells(self) -> None:
