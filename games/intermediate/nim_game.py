@@ -15,7 +15,18 @@ PILE_SIZE_MAX: Final[int] = 7
 STONE_SYMBOL: Final[str] = "●"
 
 
-@register_game(display_name="Nim Game", difficulty=Difficulty.INTERMEDIATE)
+@register_game(
+    display_name="Nim Game",
+    difficulty=Difficulty.INTERMEDIATE,
+    instructions=(
+        "Sırayla bir yığından istediğin kadar taş al (bir seferde sadece bir "
+        "yığından). Son taşı alan kazanır. Bilgisayar her zaman matematiksel "
+        "olarak en iyi hamleyi yapar (nim-sum/XOR stratejisi): eğer başlangıçtaki "
+        "yığınların XOR'u sıfırsa o oyunu kazanamazsın, sıfır değilse doğru "
+        "hamlelerle kazanabilirsin. İpucu: amacın, sıra bilgisayara geçtiğinde "
+        "kalan yığınların XOR'unu sıfır bırakmak."
+    ),
+)
 class NimGame(BaseGame):
     """Classic Nim (normal play): take the last stone to win.
 

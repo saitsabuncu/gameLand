@@ -78,6 +78,13 @@ def _word_to_display_upper(word: str) -> str:
         Achievement.PRIME_HUNTER_GOOD_OR_BETTER,
     }),
     unlock_description=HANGMAN_UNLOCK_DESCRIPTION,
+    instructions=(
+        "Bilgisayar bir kategoriden (Hayvanlar, Meyveler, Meslekler) rastgele bir "
+        "kelime tutar. Ekran klavyesinden harf seç; kelimede varsa yerine yazılır, "
+        f"yoksa yanlış sayacın artar ve çizim ilerler. {MAX_WRONG_GUESSES} yanlış "
+        "tahminde oyunu kaybedersin. Kelimeyi bulursan, yanlış sayına göre bir "
+        "performans etiketi görürsün."
+    ),
 )
 class HangmanGame(BaseGame):
     """Classic hangman: 6 wrong guesses allowed, on-screen Turkish keyboard."""

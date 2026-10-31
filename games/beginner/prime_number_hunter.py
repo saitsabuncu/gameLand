@@ -22,7 +22,16 @@ GREAT_MAX_MISTAKES: Final[int] = 5
 GOOD_MAX_MISTAKES: Final[int] = 10
 
 
-@register_game(display_name="Asal Sayı Avcısı", difficulty=Difficulty.BEGINNER)
+@register_game(
+    display_name="Asal Sayı Avcısı",
+    difficulty=Difficulty.BEGINNER,
+    instructions=(
+        f"{RANGE_MIN}-{RANGE_MAX} arasındaki grid'de tüm asal sayıları bul. Asal bir "
+        "sayıya tıklarsan yeşile döner (bulundu), asal olmayana tıklarsan kırmızıya "
+        "döner (yanlış tıklama sayılır, ama oyun bitmez). Tüm asalları bulunca oyun "
+        "sona erer ve yanlış sayına göre bir performans etiketi görürsün."
+    ),
+)
 class PrimeNumberHunterGame(BaseGame):
     """Click every prime number in a 1-100 grid; wrong clicks are tracked, not fatal."""
 

@@ -16,7 +16,16 @@ OPTIMAL_ATTEMPTS: Final[int] = math.ceil(math.log2(MAX_NUMBER - MIN_NUMBER + 1))
 GOOD_ATTEMPTS_MARGIN: Final[int] = 3
 
 
-@register_game(display_name="Number Guessing", difficulty=Difficulty.BEGINNER)
+@register_game(
+    display_name="Number Guessing",
+    difficulty=Difficulty.BEGINNER,
+    instructions=(
+        f"{MIN_NUMBER} ile {MAX_NUMBER} arasında bir sayı tutulur. Tahminini gir ve "
+        "'daha yüksek/daha düşük' ipucuna göre yeni bir tahmin yap. Deneme hakkın "
+        "sınırsız, ama ne kadar az denemede bulursan performans etiketin o kadar iyi olur "
+        f"(optimal: {OPTIMAL_ATTEMPTS} deneme, ikili arama mantığıyla)."
+    ),
+)
 class NumberGuessingGame(BaseGame):
     """Classic number guessing game with higher/lower hints."""
 

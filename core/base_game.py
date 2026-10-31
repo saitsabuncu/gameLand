@@ -19,6 +19,7 @@ class BaseGame(QWidget, metaclass=_QWidgetABCMeta):
 
     display_name: str
     difficulty: Difficulty
+    instructions: str = ""
 
     @abstractmethod
     def start(self) -> None:

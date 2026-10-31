@@ -64,16 +64,22 @@ def register_game(
     difficulty: Difficulty,
     required_achievements: frozenset[Achievement] = frozenset(),
     unlock_description: str = "",
+    instructions: str = "",
 ):
     """Class decorator that auto-registers a BaseGame subclass.
 
     required_achievements/unlock_description: optional gating. If omitted,
     the game is always unlocked (current behavior for every existing game).
+
+    instructions: shown by GameContainer's "Nasıl Oynanır?" button. Set on
+    the class (like display_name/difficulty) rather than GameEntry, since
+    GameContainer only has a live game instance to read it from.
     """
 
     def decorator(game_class: Type[BaseGame]) -> Type[BaseGame]:
         game_class.display_name = display_name
         game_class.difficulty = difficulty
+        game_class.instructions = instructions
         GameRegistry.register(
             game_class, display_name, difficulty, required_achievements, unlock_description
         )

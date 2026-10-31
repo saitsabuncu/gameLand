@@ -72,7 +72,16 @@ def _generate_question() -> MathQuestion:
     return MathQuestion(left, right, operator, quotient)
 
 
-@register_game(display_name="Math Quiz Challenge", difficulty=Difficulty.BEGINNER)
+@register_game(
+    display_name="Math Quiz Challenge",
+    difficulty=Difficulty.BEGINNER,
+    instructions=(
+        f"{QUESTION_COUNT} soruluk bir test: toplama, çıkarma, çarpma ve bölme soruları "
+        "rastgele sırayla gelir. Her soruyu cevapla, doğru/yanlış anında görünür; "
+        "'Sonraki Soru' ile devam et. Süre sınırı yok. Sonunda skoruna göre bir "
+        "performans etiketi görürsün."
+    ),
+)
 class MathQuizGame(BaseGame):
     """A 10-question arithmetic quiz covering +, -, ×, ÷ with no time pressure."""
 

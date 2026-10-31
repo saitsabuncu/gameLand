@@ -2,7 +2,7 @@ from typing import Callable
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QKeySequence, QShortcut
-from PyQt6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QWidget
+from PyQt6.QtWidgets import QHBoxLayout, QLabel, QMessageBox, QPushButton, QVBoxLayout, QWidget
 
 from core.base_game import BaseGame
 from ui.game_shortcuts import PAUSE_KEY, RESTART_KEY
@@ -25,9 +25,13 @@ class GameContainer(QWidget):
         restart_button = QPushButton("Restart")
         restart_button.clicked.connect(self._handle_restart)
 
+        help_button = QPushButton("❓ Nasıl Oynanır?")
+        help_button.clicked.connect(self._handle_show_instructions)
+
         header_layout = QHBoxLayout()
         header_layout.addWidget(back_button)
         header_layout.addWidget(self._title_label, stretch=1)
+        header_layout.addWidget(help_button)
         header_layout.addWidget(restart_button)
 
         self._body_layout = QVBoxLayout()
@@ -62,6 +66,12 @@ class GameContainer(QWidget):
     def _handle_toggle_pause(self) -> None:
         if self._current_game is not None:
             self._current_game.toggle_pause()
+
+    def _handle_show_instructions(self) -> None:
+        if self._current_game is None:
+            return
+        text = self._current_game.instructions or "Bu oyun için ek açıklama eklenmedi."
+        QMessageBox.information(self, f"{self._current_game.display_name} — Nasıl Oynanır?", text)
 
     def _clear_body(self) -> None:
         if self._current_game is not None:
