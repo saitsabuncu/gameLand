@@ -90,7 +90,8 @@ class NumberGuessingGame(BaseGame):
     def _handle_correct_guess(self) -> None:
         performance_note = self._build_performance_note()
         self._feedback_label.setText(
-            f"Doğru bildin! 🎉 ({self._attempt_count} denemede) — {performance_note}"
+            f"Doğru bildin! 🎉 Sayı {self._target_number} idi. "
+            f"({self._attempt_count} denemede) — {performance_note}"
         )
         self._guess_input.setEnabled(False)
         self._submit_button.setEnabled(False)
