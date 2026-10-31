@@ -2,10 +2,11 @@ import math
 import random
 from typing import Final
 
-from PyQt6.QtWidgets import QLabel, QLineEdit, QPushButton, QVBoxLayout
+from PyQt6.QtWidgets import QLabel, QPushButton, QVBoxLayout
 
 from core.base_game import BaseGame, Difficulty
 from core.game_registry import register_game
+from ui.shortcut_aware_line_edit import ShortcutAwareLineEdit
 
 MIN_NUMBER: Final[int] = 1
 MAX_NUMBER: Final[int] = 100
@@ -28,7 +29,7 @@ class NumberGuessingGame(BaseGame):
         self._feedback_label = QLabel()
         self._attempts_label = QLabel()
 
-        self._guess_input = QLineEdit()
+        self._guess_input = ShortcutAwareLineEdit()
         self._guess_input.setPlaceholderText(f"{MIN_NUMBER}-{MAX_NUMBER} arası bir sayı")
         self._guess_input.returnPressed.connect(self._handle_guess)
 

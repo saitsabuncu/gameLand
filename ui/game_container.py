@@ -5,6 +5,7 @@ from PyQt6.QtGui import QKeySequence, QShortcut
 from PyQt6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QWidget
 
 from core.base_game import BaseGame
+from ui.game_shortcuts import PAUSE_KEY, RESTART_KEY
 
 
 class GameContainer(QWidget):
@@ -31,11 +32,11 @@ class GameContainer(QWidget):
 
         self._body_layout = QVBoxLayout()
 
-        self._restart_shortcut = QShortcut(QKeySequence(Qt.Key.Key_R), self)
+        self._restart_shortcut = QShortcut(QKeySequence(RESTART_KEY), self)
         self._restart_shortcut.setContext(Qt.ShortcutContext.ApplicationShortcut)
         self._restart_shortcut.activated.connect(self._handle_restart)
 
-        self._pause_shortcut = QShortcut(QKeySequence(Qt.Key.Key_P), self)
+        self._pause_shortcut = QShortcut(QKeySequence(PAUSE_KEY), self)
         self._pause_shortcut.setContext(Qt.ShortcutContext.ApplicationShortcut)
         self._pause_shortcut.activated.connect(self._handle_toggle_pause)
 
