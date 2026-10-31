@@ -33,7 +33,7 @@ Metin girisi olan oyunlarda (orn. Number Guessing) `ShortcutAwareLineEdit` kulla
 
 ## Yardim Sistemi (Nasil Oynanir?)
 
-`GameContainer`'da her oyunda goruntulenen bir **"❓ Nasil Oynanir?"** butonu vardir. Tiklaninca aktif oyunun kurallarini aciklayan bir mesaj penceresi acilir. Tum mevcut oyunlarda (Number Guessing, Math Quiz Challenge, Asal Sayi Avcisi, Hangman, Nim Game, Monty Hall Problemi Simulasyonu, Math Countdown) bu aciklama metni tanimlidir.
+`GameContainer`'da her oyunda goruntulenen bir **"❓ Nasil Oynanir?"** butonu vardir. Tiklaninca aktif oyunun kurallarini aciklayan bir mesaj penceresi acilir. Tum mevcut oyunlarda (Number Guessing, Math Quiz Challenge, Asal Sayi Avcisi, Hangman, Nim Game, Monty Hall Problemi Simulasyonu, Math Countdown, 2048) bu aciklama metni tanimlidir.
 
 **Yeni bir oyun yazarken** aciklama eklemek icin, `@register_game` decorator'una bir `instructions` parametresi gecirilir:
 
@@ -114,6 +114,6 @@ Ilk 3 Beginner oyunu ayni felsefeyi paylasir: sert bir basari/basarisizlik sinir
 - [x] Math Countdown -- klasik Countdown sayi oyunu. Her turda 6 sayi (0-4 buyuk kart: 25/50/75/100, kalani kucuk kart: 1-10'dan iki set) ve 3 haneli hedef verilir; +-*/ ve parantezlerle 30 saniyede hedefe en yakin sonucu bulmaya calisilir. Kural: her ara sonuc pozitif tam sayi olmali, bolme kalansiz olmali -- ifade `ast` ile guvenli sekilde ayristirilip dogrulanir (`utils/countdown_utils.py`). Puanlama: tam isabet 10, +-5 ici 7, +-10 ici 5, uzaksa 0 puan; 5 tur sonunda toplam puana gore performans etiketi. **Projenin ilk gercek zamanlayicili oyunu**: `toggle_pause()` burada artik no-op degil, P tusu QTimer'i gercekten durdurup devam ettiriyor (bkz. Klavye Kisayollari).
 
 ### Ileri (Advanced)
-- [ ] 2048 Oyunu
+- [x] 2048 Oyunu -- klasik sabit 4x4 grid, ok tuslariyla (Yukari/Asagi/Sol/Sag) kontrol. Ayni degerdeki komsu taslar kaydirma yonunde birlesip toplanir (klasik "tek pasta bir kez birlesme" kurali), her hamleden sonra bos bir huczeye %90 '2' / %10 '4' eklenir. 2048'e ulasinca tebrik banner'i gorunur ama oyun bitmez -- grid tamamen dolup hicbir yonde gecerli hamle kalmayana kadar devam edilebilir. Yon-bagimsiz tek bir slide-and-merge mantigi (`utils/grid2048_utils.py`) grid'i transpoze/ters cevirerek 4 yonu de ayni koddan turetir. Animasyonsuz, anlik yeniden cizim -- projenin diger oyunlariyla tutarli.
 - [ ] Sudoku Cozucu ve Oyunu
 - [ ] Fraktal ve Kaos Oyunlari
