@@ -16,6 +16,12 @@ HANGMAN_UNLOCK_DESCRIPTION: Final[str] = (
 
 MAX_WRONG_GUESSES: Final[int] = 6
 
+# Wrong-guess-count performance tiers for a win, checked from strictest
+# to loosest (mirrors Number Guessing / Math Quiz / Prime Hunter).
+EXCELLENT_MAX_WRONG: Final[int] = 0
+GREAT_MAX_WRONG: Final[int] = 2
+GOOD_MAX_WRONG: Final[int] = 4
+
 WORD_CATEGORIES: Final[dict[str, list[str]]] = {
     "Hayvanlar": [
         "kedi", "köpek", "aslan", "kaplan", "fil",
@@ -156,12 +162,25 @@ class HangmanGame(BaseGame):
         self._hangman_label.setText(HANGMAN_STAGES[self._wrong_count])
 
     def _handle_win(self) -> None:
-        self._status_label.setText(f"Kazandın! 🎉 Kelime: {_word_to_display_upper(self._word)}")
+        performance_note = self._build_performance_note()
+        self._status_label.setText(
+            f"Kazandın! 🎉 Kelime: {_word_to_display_upper(self._word)} "
+            f"({self._wrong_count} yanlış tahmin) — {performance_note}"
+        )
         self._disable_all_letters()
 
     def _handle_loss(self) -> None:
         self._status_label.setText(f"Kaybettin! 💀 Kelime: {_word_to_display_upper(self._word)} idi.")
         self._disable_all_letters()
+
+    def _build_performance_note(self) -> str:
+        if self._wrong_count <= EXCELLENT_MAX_WRONG:
+            return "Mükemmel! 🏆"
+        if self._wrong_count <= GREAT_MAX_WRONG:
+            return "Harika iş! 🌟"
+        if self._wrong_count <= GOOD_MAX_WRONG:
+            return "İyi iş! 👍"
+        return "Kıl payı kurtuldun! 😅"
 
     def _disable_all_letters(self) -> None:
         for button in self._letter_buttons.values():
