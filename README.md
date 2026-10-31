@@ -33,7 +33,7 @@ Metin girisi olan oyunlarda (orn. Number Guessing) `ShortcutAwareLineEdit` kulla
 
 ## Yardim Sistemi (Nasil Oynanir?)
 
-`GameContainer`'da her oyunda goruntulenen bir **"❓ Nasil Oynanir?"** butonu vardir. Tiklaninca aktif oyunun kurallarini aciklayan bir mesaj penceresi acilir. Tum mevcut oyunlarda (Number Guessing, Math Quiz Challenge, Asal Sayi Avcisi, Hangman, Nim Game, Monty Hall Problemi Simulasyonu, Math Countdown, 2048) bu aciklama metni tanimlidir.
+`GameContainer`'da her oyunda goruntulenen bir **"❓ Nasil Oynanir?"** butonu vardir. Tiklaninca aktif oyunun kurallarini aciklayan bir mesaj penceresi acilir. Tum mevcut oyunlarda (Number Guessing, Math Quiz Challenge, Asal Sayi Avcisi, Hangman, Nim Game, Monty Hall Problemi Simulasyonu, Math Countdown, 2048, Sudoku) bu aciklama metni tanimlidir.
 
 **Yeni bir oyun yazarken** aciklama eklemek icin, `@register_game` decorator'una bir `instructions` parametresi gecirilir:
 
@@ -115,5 +115,5 @@ Ilk 3 Beginner oyunu ayni felsefeyi paylasir: sert bir basari/basarisizlik sinir
 
 ### Ileri (Advanced)
 - [x] 2048 Oyunu -- klasik sabit 4x4 grid, ok tuslariyla (Yukari/Asagi/Sol/Sag) kontrol. Ayni degerdeki komsu taslar kaydirma yonunde birlesip toplanir (klasik "tek pasta bir kez birlesme" kurali), her hamleden sonra bos bir huczeye %90 '2' / %10 '4' eklenir. 2048'e ulasinca tebrik banner'i gorunur ama oyun bitmez -- grid tamamen dolup hicbir yonde gecerli hamle kalmayana kadar devam edilebilir. Yon-bagimsiz tek bir slide-and-merge mantigi (`utils/grid2048_utils.py`) grid'i transpoze/ters cevirerek 4 yonu de ayni koddan turetir. Animasyonsuz, anlik yeniden cizim -- projenin diger oyunlariyla tutarli.
-- [ ] Sudoku Cozucu ve Oyunu
+- [x] Sudoku -- klasik 9x9, tek sabit zorluk (~40 ipucu hucresi). Bulmaca her start()/reset()'te yeniden uretilir: once backtracking ile rastgele tam cozum uretilir, sonra "delik acma" yontemiyle hucreler rastgele sirayla bosaltilir -- her bosaltmadan sonra bulmacanin hala tek cozumu oldugu dogrulanir (degilse o hucre geri konur), yani her bulmaca garantili biricik cozumlu. Bos bir huczeye tiklayip klavyeden 1-9 yazilir; bir deger ayni satir/sutun/3x3 kutuda zaten varsa o hucre VE cakistigi hucre aninda kirmiziya doner. 3 sinirli ipucu hakki var (secili bos hucreye dogru degeri yazar). Tum hucreler cakismasiz dolunca bulmaca kilitlenir ve tamamlandi mesaji gorunur. Uretici/cozucu/cakisma mantigi `utils/sudoku_utils.py`'de UI'dan bagimsiz (uretim ~10-20ms).
 - [ ] Fraktal ve Kaos Oyunlari
